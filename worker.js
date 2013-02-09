@@ -153,6 +153,12 @@ var handlers = {
     broadcast(msg.topic, msg.data);
   },
 
+  'tabs': function(port, msg) {
+    log("tabs with data " + msg.data);
+    // tell our content
+    // broadcast(msg.topic, msg.data);
+  },
+
   // Sent by firefox to the worker.  Firefox needs some configuration data to
   // enable the recommend button in the urlbar.  If we do not support the
   // recommend button, we do not have to respond to this.
