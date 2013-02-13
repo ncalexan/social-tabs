@@ -57,7 +57,7 @@ function userIsDisconnected()
   $("#usericonbox").hide();
 }
 
-messageHandlers = {
+var messageHandlers = {
   "worker.connected": function(data) {
     // our port has connected with the worker, do some initialization
     // worker.connected is our own custom message
@@ -79,14 +79,22 @@ messageHandlers = {
 };
 
 navigator.mozSocial.getWorker().port.onmessage = function onmessage(e) {
-    dump("SIDEBAR Got message: " + e.data.topic + " " + e.data.data +"\n");
-    var topic = e.data.topic;
-    var data = e.data.data;
-    if (messageHandlers[topic])
-        messageHandlers[topic](data);
-    if (topic && topic == "social.port-closing") {
-      dump("!!!!!!!!! port has closed\n");
-    }
+  dump("SIDEBAR Got message: " + e.data.topic + " " + e.data.data +"\n");
+  var topic = e.data.topic;
+  var data = e.data.data;
+
+  if (messageHandlers[topic]) {
+    messageHandlers[topic](data);
+    dump("SIDEBAR Handled message: " + topic + "\n");
+    return;
+  }
+
+  if (topic && topic == "social.port-closing") {
+    dump("SIDEBAR port has closed\n");
+    return;
+  }
+
+  dump("SIDEBAR Unhandled message: " + e.data.topic + " " + e.data.data +"\n");
 };
 
 // here we ask the worker to reload itself.  The worker will send a reload
@@ -157,12 +165,51 @@ function notify(type) {
         actionArgs: {
           toURL: baselocation
         }
-      }
+      };
       port.postMessage({topic:"social.notification-create", data: data});
       break;
     case "chat-request":
       port.postMessage({topic:"social.request-chat", data: baselocation+"/chatWindow.html?id="+(chatters++)});
       break;
   }
-}
+};
 
+function renderTabs(data) {
+  var myDeviceInfo = { profileID: 'localhost' };
+  var temp = { 'localhost': { online: true, tabs: data } };
+  data = temp;
+
+  var ul = $("div#tabs > ul");
+  ul.empty();
+  var devices = Object.keys(data);
+  devices.sort();
+  devices.forEach(function(deviceName) {
+    var online = data[deviceName].online;
+    dump("device " + deviceName + " (online: " + online + ")\n");
+    var dul = $("#templates>.device-entry").clone();
+    dul.find("span.device-name").text(deviceName);
+    if (deviceName == myDeviceInfo.profileID)
+      dul.addClass("my-device");
+    if (online)
+      dul.addClass("online");
+    else
+      dul.addClass("offline");
+    ul.append(dul);
+    var tul = dul.find("ul.device-tabs");
+    var tabs = data[deviceName].tabs || [];
+    tabs.forEach(function(tab) {
+      dump("tab " + tab.title + "\n");
+      var title = tab.title || "(no title)";
+      var t = $("#templates>.tab-entry").clone();
+      t.find("a").attr("href", tab.url).attr("target", "_blank");
+      t.find("a").text(title);
+      if (tab.faviconURL)
+        t.find("img.tab-favicon").attr("src", tab.faviconURL);
+      else
+        t.find("img.tab-favicon").remove();
+      tul.append(t);
+    });
+  });
+};
+
+messageHandlers["tabs"] = renderTabs;

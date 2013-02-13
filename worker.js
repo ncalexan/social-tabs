@@ -25,7 +25,7 @@ function broadcast(topic, payload)
   // we need to broadcast to all ports connected to this shared worker
   ports = [].concat(_broadcastReceivers);
   for (var i = 0; i < ports.length; i++) {
-    //log("about to broadcast to " + _broadcastReceivers[i]);
+    log("about to broadcast to " + _broadcastReceivers[i]);
     try {
       ports[i].postMessage({topic: topic, data: payload});
     } catch(e) {
@@ -36,10 +36,12 @@ function broadcast(topic, payload)
 
 ononline = function() {
   dump("!!!!!!! ononline called "+navigator.onLine+"\n");
-}
+};
+
 onoffline = function() {
   dump("!!!!!!! onoffline called "+navigator.onLine+"\n");
-}
+};
+
 // Called when any port connects to the worker
 onconnect = function(e) {
   try {
@@ -51,7 +53,7 @@ onconnect = function(e) {
 
       var msg = e.data;
       if (!msg) {
-        log("onmessage called with no data")
+        log("onmessage called with no data");
         return;
       }
       // handle the special message that tells us a port is closing.
@@ -80,7 +82,7 @@ onconnect = function(e) {
           log(e+"\n");
         }
       }
-    }
+    };
 
     // worker.connected is our own message, it is not part of any api.  We
     // use it as a way to signal content that we are connected to them.  This
@@ -94,7 +96,7 @@ onconnect = function(e) {
   } catch (e) {
     log(e);
   }
-}
+};
 
 var userData = {};
 
@@ -128,11 +130,11 @@ var handlers = {
 
   // our content (sidebar, etc) can request broadcast messages. 
   'broadcast.listen': function(port, data) {
-    if (data)
+    if (data) {
       _broadcastReceivers.push(port);
-    else {
+    } else {
       var i = _broadcastReceivers.indexOf(port);
-      f (i != -1)
+      if (i != -1)
         _broadcastReceivers.splice(i, 1);
     }
   },
@@ -151,12 +153,6 @@ var handlers = {
     log("demo worker got unrecommend request for " + msg.data.url);
     // tell our content
     broadcast(msg.topic, msg.data);
-  },
-
-  'tabs': function(port, msg) {
-    log("tabs with data " + msg.data);
-    // tell our content
-    // broadcast(msg.topic, msg.data);
   },
 
   // Sent by firefox to the worker.  Firefox needs some configuration data to
@@ -223,5 +219,27 @@ var handlers = {
     } catch(e) {
       dump(e.stack+"\n");
     }
-  }
-}
+  },
+
+  'tab.ready': function(port, msg) {
+    log("ignoring tab.ready message");
+  },
+
+  'tab.close': function(port, msg) {
+    log("ignoring tab.close message");
+  },
+
+  'tab.activate': function(port, msg) {
+    log("ignoring tab.activate message");
+  },
+
+  'tab.deactivate': function(port, msg) {
+    log("ignoring tab.deactivate message");
+  },
+
+  'tabs': function(port, msg) {
+    log("tabs with topic " + msg.topic + " and data " + msg.data);
+    // tell our content
+    broadcast(msg.topic, msg.data);
+  },
+};
