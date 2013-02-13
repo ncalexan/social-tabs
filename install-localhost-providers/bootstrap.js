@@ -61,11 +61,33 @@ function uninstallProvider(name, manifest) {
   }
 }
 
-function install(aParams, aReason) { }
+const BOOTSTRAP_REASONS = {
+  APP_STARTUP     : 1,
+  APP_SHUTDOWN    : 2,
+  ADDON_ENABLE    : 3,
+  ADDON_DISABLE   : 4,
+  ADDON_INSTALL   : 5,
+  ADDON_UNINSTALL : 6,
+  ADDON_UPGRADE   : 7,
+  ADDON_DOWNGRADE : 8
+};
 
-function uninstall(aParams, aReason) { }
+function install(aParams, aReason) {
+  dump("install " + aReason + "\n");
+};
+
+function uninstall(aParams, aReason) {
+  dump("uninstall " + aReason + "\n");
+};
 
 function startup(aParams, aReason) {
+  dump("startup " + aReason + "\n");
+
+  if (aReason !== BOOTSTRAP_REASONS.ADDON_INSTALL &&
+      aReason !== BOOTSTRAP_REASONS.ADDON_ENABLE &&
+      aReason !== BOOTSTRAP_REASONS.ADDON_DOWNGRADE)
+    return;
+
   // add our example manifests
   for (let key in manifests) {
     Cu.reportError("installing "+key);
@@ -81,11 +103,18 @@ function startup(aParams, aReason) {
 }
 
 function shutdown(aParams, aReason) {
-  // add our example manifests
+  dump("shutdown " + aReason + "\n");
+
+  if (aReason !== BOOTSTRAP_REASONS.ADDON_UNINSTALL &&
+      aReason !== BOOTSTRAP_REASONS.ADDON_DISABLE)
+    return;
+
+  // remove our example manifests
   for (let key in manifests) {
     Cu.reportError("uninstalling "+key);
     uninstallProvider(key, manifests[key]);
   }
+
   // all this should only be necessary for fx20
   let window = Services.wm.getMostRecentWindow("navigator:browser");
   window.SocialToolbar.populateProviderMenus();
@@ -97,4 +126,4 @@ function shutdown(aParams, aReason) {
     if (providers.length)
       Social.provider = providers[0];
   });
-}
+};
