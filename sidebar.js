@@ -88,8 +88,7 @@ navigator.mozSocial.getWorker().port.onmessage = function onmessage(e) {
       dump("!!!!!!!!! port has closed\n");
     }
 };
-navigator.mozSocial.getWorker().port.postMessage({topic: "broadcast.listen", data: true});
-dump("**** sidebar portid is "+navigator.mozSocial.getWorker().port._portid+"\n");
+
 // here we ask the worker to reload itself.  The worker will send a reload
 // message to the Firefox api.
 function workerReload() {
