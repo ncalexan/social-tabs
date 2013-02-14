@@ -69,6 +69,26 @@ function startBroadcastingTabEventsTo(socialProvider) {
   log("Broadcasting tab events to provider", socialProvider);
 }
 
+/**
+ * We want "tabs providers" to be able to send events to the add-on
+ * and possibly receive responses.  This wires up such query events
+ * with responses.
+ *
+ * @param {SocialProvider} socialProvider to send events to.
+ */
+function addTabsRequestHandlersTo(socialProvider) {
+  let workerAPI = socialProvider.workerAPI;
+  if (!workerAPI)
+    return;
+
+  workerAPI.handlers['social.tabs.fetchAll'] = function(data) {
+    log('social.tabs.fetchAll');
+    this._port.postMessage({topic: 'social.tabs.fetchAll-response',
+                            data: _.map(tabs, _dataForTab)});
+  };
+  log("workerAPI.handlers", workerAPI.handlers);
+}
+
 function startListeningForTabRequests() {
   let WorkerAPI = Cu.import("resource://gre/modules/WorkerAPI.jsm", {}).WorkerAPI;
 
@@ -79,6 +99,7 @@ function startListeningForTabRequests() {
     let enable = !!data;
     if (enable) {
       startBroadcastingTabEventsTo(this._provider);
+      addTabsRequestHandlersTo(this._provider);
     } else {
       // Nothing for now.
     }

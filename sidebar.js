@@ -240,3 +240,17 @@ function workerTabsRequestEvents() {
   var worker = navigator.mozSocial.getWorker();
   worker.port.postMessage({topic: "worker.tabs.request-events", data: true});
 }
+
+/**
+ * Send event to worker requesting it to ask the WorkerAPI for tab
+ * events.
+ */
+function workerTabsFetchAll() {
+  dump("workerTabsFetchAll");
+  var worker = navigator.mozSocial.getWorker();
+  worker.port.postMessage({topic: "worker.tabs.fetchAll", data: true});
+}
+
+messageHandlers["social.tabs.fetchAll-response"] = function(data) {
+  dump("social.tabs.fetchAll-response " + JSON.stringify(data));
+};

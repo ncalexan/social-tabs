@@ -251,4 +251,14 @@ var handlers = {
     log("worker.tabs.request-events with data " + msg.data);
     apiPort.postMessage({topic: 'social.tabs.request-events', data: msg.data});
   },
+
+  'worker.tabs.fetchAll': function(port, msg) {
+    log("worker.tabs.fetchAll " + msg.data);
+    apiPort.postMessage({topic: 'social.tabs.fetchAll', data: msg.data});
+  },
+
+  'social.tabs.fetchAll-response': function(port, msg) {
+    log("social.tabs.fetchAll-response " + msg.data);
+    broadcast(msg.topic, msg.data);
+  },
 };
