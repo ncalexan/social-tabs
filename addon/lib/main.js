@@ -6,6 +6,8 @@
 const LOG_TAG = "social-tabs-addon";
 const log = console.log.bind(LOG_TAG);
 
+const _ = require("underscore");
+
 const tabs = require("tabs");
 
 const { Cu } = require("chrome");
