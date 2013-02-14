@@ -17,7 +17,7 @@ function signin() {
     userName: "matey",
     dispayName: "Bucko Matey",
     profileURL: baselocation + "/user.html"
-  }
+  };
   document.cookie="userdata="+JSON.stringify(userdata);
 }
 
@@ -174,41 +174,58 @@ function notify(type) {
   }
 };
 
+var myDeviceInfo = { profileID: 'localhost' };
+
+function renderDevice(deviceName, online, tabs) {
+  dump("device " + deviceName + " (online: " + online + ")\n");
+
+  var dul = $("#templates>.device-entry").clone();
+  dul.find("span.device-name").text(deviceName);
+
+  if (deviceName == myDeviceInfo.profileID)
+    dul.addClass("my-device");
+
+  if (online)
+    dul.addClass("online");
+  else
+    dul.addClass("offline");
+
+  var tul = dul.find("ul.device-tabs");
+  tabs.forEach(function(tab) {
+    dump("tab " + tab.title + "\n");
+    var title = tab.title || "(no title)";
+    var t = $("#templates>.tab-entry").clone();
+    t.find("a").attr("href", tab.url).attr("target", "_blank");
+    t.find("a").text(title);
+    if (tab.faviconURL)
+      t.find("img.tab-favicon").attr("src", tab.faviconURL);
+    else
+      t.find("img.tab-favicon").remove();
+    tul.append(t);
+  });
+
+  return dul;
+}
+
 function renderTabs(data) {
-  var myDeviceInfo = { profileID: 'localhost' };
   var temp = { 'localhost': { online: true, tabs: data } };
   data = temp;
 
   var ul = $("div#tabs > ul");
   ul.empty();
+
+  var duls = [];
+
   var devices = Object.keys(data);
   devices.sort();
   devices.forEach(function(deviceName) {
     var online = data[deviceName].online;
-    dump("device " + deviceName + " (online: " + online + ")\n");
-    var dul = $("#templates>.device-entry").clone();
-    dul.find("span.device-name").text(deviceName);
-    if (deviceName == myDeviceInfo.profileID)
-      dul.addClass("my-device");
-    if (online)
-      dul.addClass("online");
-    else
-      dul.addClass("offline");
-    ul.append(dul);
-    var tul = dul.find("ul.device-tabs");
     var tabs = data[deviceName].tabs || [];
-    tabs.forEach(function(tab) {
-      dump("tab " + tab.title + "\n");
-      var title = tab.title || "(no title)";
-      var t = $("#templates>.tab-entry").clone();
-      t.find("a").attr("href", tab.url).attr("target", "_blank");
-      t.find("a").text(title);
-      if (tab.faviconURL)
-        t.find("img.tab-favicon").attr("src", tab.faviconURL);
-      else
-        t.find("img.tab-favicon").remove();
-      tul.append(t);
-    });
+
+    var dul = renderDevice(deviceName, online, tabs);
+    dump("" + dul);
+
+    ul.append(dul);
   });
 };
 
