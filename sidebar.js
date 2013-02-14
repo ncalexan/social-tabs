@@ -230,3 +230,13 @@ function renderTabs(data) {
 };
 
 messageHandlers["tabs"] = renderTabs;
+
+/**
+ * Send event to worker requesting it to ask the WorkerAPI for tab
+ * events.
+ */
+function workerTabsRequestEvents() {
+  dump("workerTabsRequestEvents");
+  var worker = navigator.mozSocial.getWorker();
+  worker.port.postMessage({topic: "worker.tabs.request-events", data: true});
+}

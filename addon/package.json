@@ -1,0 +1,9 @@
+{
+    "id": "jid1-jctN84MsWBHQGA",
+    "name": "social-tabs-addon",
+    "fullName": "social-tabs-addon",
+    "description": "Firefox add-on that propagates tab events to social providers",
+    "author": "Nick Alexander",
+    "license": "MPL 2.0",
+    "version": "0.2"
+}

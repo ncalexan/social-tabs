@@ -1,0 +1,1 @@
+Firefox add-on that propagates tab events to social providers.

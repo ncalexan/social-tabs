@@ -221,6 +221,10 @@ var handlers = {
     }
   },
 
+  'tab.open': function(port, msg) {
+    log("ignoring tab.open message");
+  },
+
   'tab.ready': function(port, msg) {
     log("ignoring tab.ready message");
   },
@@ -241,5 +245,10 @@ var handlers = {
     log("tabs with topic " + msg.topic + " and data " + msg.data);
     // tell our content
     broadcast(msg.topic, msg.data);
+  },
+
+  'worker.tabs.request-events': function(port, msg) {
+    log("worker.tabs.request-events with data " + msg.data);
+    apiPort.postMessage({topic: 'social.tabs.request-events', data: msg.data});
   },
 };
