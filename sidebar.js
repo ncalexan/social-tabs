@@ -21,10 +21,10 @@ function signin() {
   var end = location.href.indexOf("sidebar.htm");
   var baselocation = location.href.substr(0, end);
   var userdata = {
-    portrait: baselocation + "/user.png",
+    portrait: baselocation + "user.png",
     userName: "matey",
     dispayName: "Bucko Matey",
-    profileURL: baselocation + "/user.html"
+    profileURL: baselocation + "user.html"
   };
   document.cookie="userdata="+JSON.stringify(userdata);
 }
