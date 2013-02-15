@@ -1,100 +1,97 @@
 <html>
-<head>
-  <meta charset="utf-8">
-	<title>DemoSocialService</title>
-</head>
-<style>
+  <head>
+    <meta charset="utf-8">
+	  <title>DemoSocialService</title>
+  </head>
+  <style>
 
-</style>
-<link rel="manifest" type="text/json" href="manifest.json"/>
-<link rel="stylesheet" href="./sidebar.css"/>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script src="./sidebar.js" type="text/javascript"></script>
-<body onload="onLoad()">
+  </style>
+  <link rel="manifest" type="text/json" href="manifest.json"/>
+  <link rel="stylesheet" href="./sidebar.css"/>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="./sidebar.js" type="text/javascript"></script>
+  <body onload="onLoad()">
 
-<div id="header">
-  <div id="signin">
-    <img src="https://developer.mozilla.org/files/3967/plain_sign_in_black.png" onclick="signin()"/>
-    <div id="signin_error"></div>
-  </div>
-  <div id="useridbox" style="display:none">Signed in as <div id="userid"></div>
-  </div>
-  <div id="usericonbox" style="display:none">
-    <img id="usericon">
-  </div>
-  <div id="usernotifbox" style="display:none">
-    <img id="usernotif">
-  </div>
-</div>
+    <div id="header">
+      <div id="signin">
+        <img src="https://developer.mozilla.org/files/3967/plain_sign_in_black.png" onclick="signin()"/>
+        <div id="signin_error"></div>
+      </div>
+      <div id="useridbox" style="display:none">Signed in as <div id="userid"></div>
+      </div>
+      <div id="usericonbox" style="display:none">
+        <img id="usericon">
+      </div>
+      <div id="usernotifbox" style="display:none">
+        <img id="usernotif">
+      </div>
+    </div>
 
-<div id="content" style="display:none">
+    <div id="content" style="display:none">
 
-<p>SocialAPI Feature Demo/Testing.</p>
+      <h1>social-tabs demo</h1>
 
-<button onclick="signout()">signout</button>
+      <button onclick="signout()">Signout</button>
 
-<ul id="testbuttons">
-  <li><button onclick="openChat(event)">Chat Panel</button></li>
-  <li><button onclick="openDataPanel(event)">Flyout using data url</button></li>
-  <li><button onclick="notify('link')">Notify Link</button></li>
-  <li><button onclick="notify('chat-request')">Request Chat via Worker</button></li>
-  <li><button onclick="location.reload()">reload sidebar</button></li>
-  <li><button onclick="workerReload()">reload the worker</button></li>
-  <li><button onclick="workerTabsRequestEvents()">request tab events</button></li>
-  <li><button onclick="workerTabsFetchAll()">fetch all tabs</button></li>
-  <li><button onclick="workerTabsFetchRemote()">fetch remote tabs</button></li>
-  <li><button onclick="workerTabsToggleSync()">toggle syncing</button></li>
-</ul>
-<div id="hovertest" style="margin: 4px; border: 1px solid grey; height: 75px; overflow: hidden; overflow-y: scroll">
-  Flyout Hover Test
-  <ul>
-  <li><button onmouseover="openPanel(this)" value="Today!">Open</button><button onmouseover="closePanel()">Close</button></li>
-  <li><button onmouseover="openPanel(this)" value="Tomorrow!">Open</button><button onmouseover="closePanel()">Close</button></li>
-  <li><button onmouseover="openPanel(this)" value="Yesterday!">Open</button><button onmouseover="closePanel()">Close</button></li>
-  <li><button onmouseover="openPanel(this)" value="no">Open</button><button onmouseover="closePanel()">Close</button></li>
-  <li><button onmouseover="openPanel(this)" value="yes">Open</button><button onmouseover="closePanel()">Close</button></li>
-  <li><button onmouseover="openPanel(this)" value="maybe">Open</button><button onmouseover="closePanel()">Close</button></li>
-  <li><button onmouseover="openPanel(this)" value="try again">Open</button><button onmouseover="closePanel()">Close</button></li>
-  <li><button onmouseover="openPanel(this)" value="whatever">Open</button><button onmouseover="closePanel()">Close</button></li>
-  </ul>
-</div>
-  <ul>These links should open in tabs:
-  <li><a href="http://www.mozilla.org" target="_blank">non-same-origin-link with target</a></li>
-  <li><a href="http://www.mozilla.org">non-same-origin-link</a></li>
-  </ul>
+      <button onclick="workerTabsToggleSync()">Toggle polling</button>
 
-  <div>Shared: <div id="shared" class="textbox"></div></div>
-  <div>Host: <div id="domain" class="textbox"></div></div>
-</div>
+      <!-- <ul id="testbuttons"> -->
+      <!--   <li><button onclick="openChat(event)">Chat Panel</button></li> -->
+      <!--   <li><button onclick="openDataPanel(event)">Flyout using data url</button></li> -->
+      <!--   <li><button onclick="notify('link')">Notify Link</button></li> -->
+      <!--   <li><button onclick="notify('chat-request')">Request Chat via Worker</button></li> -->
+      <!--   <li><button onclick="location.reload()">reload sidebar</button></li> -->
+      <!--   <li><button onclick="workerReload()">reload the worker</button></li> -->
+      <!--   <li><button onclick="workerTabsRequestEvents()">request tab events</button></li> -->
+      <!--   <li><button onclick="workerTabsFetchAll()">fetch all tabs</button></li> -->
+      <!--   <li><button onclick="workerTabsFetchRemote()">fetch remote tabs</button></li> -->
+      <!--   <li><button onclick="workerTabsToggleSync()">toggle syncing</button></li> -->
+      <!-- </ul> -->
 
-<h1>Tabs</h1>
+      <!-- <div id="hovertest" style="margin: 4px; border: 1px solid grey; height: 75px; overflow: hidden; overflow-y: scroll"> -->
+      <!--   Flyout Hover Test -->
+      <!--   <ul> -->
+      <!--     <li><button onmouseover="openPanel(this)" value="Today!">Open</button><button onmouseover="closePanel()">Close</button></li> -->
+      <!--     <li><button onmouseover="openPanel(this)" value="Tomorrow!">Open</button><button onmouseover="closePanel()">Close</button></li> -->
+      <!--     <li><button onmouseover="openPanel(this)" value="Yesterday!">Open</button><button onmouseover="closePanel()">Close</button></li> -->
+      <!--     <li><button onmouseover="openPanel(this)" value="no">Open</button><button onmouseover="closePanel()">Close</button></li> -->
+      <!--     <li><button onmouseover="openPanel(this)" value="yes">Open</button><button onmouseover="closePanel()">Close</button></li> -->
+      <!--     <li><button onmouseover="openPanel(this)" value="maybe">Open</button><button onmouseover="closePanel()">Close</button></li> -->
+      <!--     <li><button onmouseover="openPanel(this)" value="try again">Open</button><button onmouseover="closePanel()">Close</button></li> -->
+      <!--     <li><button onmouseover="openPanel(this)" value="whatever">Open</button><button onmouseover="closePanel()">Close</button></li> -->
+      <!--   </ul> -->
+      <!-- </div> -->
 
-<h2>Local</h2>
+      <!-- <ul>These links should open in tabs: -->
+      <!--   <li><a href="http://www.mozilla.org" target="_blank">non-same-origin-link with target</a></li> -->
+      <!--   <li><a href="http://www.mozilla.org">non-same-origin-link</a></li> -->
+      <!-- </ul> -->
 
-<div id="tabs-local">
-  <ul>
-    <li>list of tabs goes here</li>
-  </ul>
-</div>
+      <!-- <div>Shared: <div id="shared" class="textbox"></div></div> -->
+      <!-- <div>Host: <div id="domain" class="textbox"></div></div> -->
 
-<h2>Remote</h2>
+      <h2>My tabs</h2>
+      <div id="tabs-local">
+        <ul>
+        </ul>
+      </div>
 
-<div id="tabs-remote">
-  <ul>
-    <li>list of tabs goes here</li>
-  </ul>
-</div>
+      <h2>Tabs from other devices</h2>
+      <div id="tabs-remote">
+        <ul>
+        </ul>
+      </div>
+    </div>
 
+    <div id="templates" style="display: none">
+      <li class="device-entry">
+        Tabs from: <span class="device-name"></span>
+        <span class="if-online">[online]</span>
+        <ul class="device-tabs"></ul>
+      </li>
 
-<div id="templates" style="display: none">
-  <li class="device-entry">
-  Tabs from: <span class="device-name"></span>
-  <span class="if-online">[online]</span>
-  <ul class="device-tabs"></ul>
-  </li>
+      <li class="tab-entry"><img class="tab-favicon"><a href=""></a></li>
+    </div>
 
-  <li class="tab-entry"><img class="tab-favicon"><a href=""></a></li>
-</div>
-
-</body>
+  </body>
 </html>
