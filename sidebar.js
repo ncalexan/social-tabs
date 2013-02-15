@@ -217,8 +217,7 @@ function renderDevice(deviceName, online, tabs) {
   return dul;
 }
 
-function renderTabs(data) {
-  var ul = $("div#tabs > ul");
+function renderTabs(ul, data) {
   ul.empty();
 
   var duls = [];
@@ -269,6 +268,15 @@ messageHandlers["social.tabs.request-events-response"] = function(data) {
   localDeviceInfo = data.localDeviceInfo;
 };
 
+messageHandlers["tabs"] = function(data) {
+  log("tabs" + JSON.stringify(data));
+
+  var tabs = {};
+  tabs[localDeviceInfo.profileID] = { online: true, tabs: data };
+  var ul = $("div#tabs-local > ul");
+  renderTabs(ul, tabs);
+};
+
 function workerTabsFetchRemote() {
   log("workerTabsFetchRemote");
   var worker = navigator.mozSocial.getWorker();
@@ -277,7 +285,9 @@ function workerTabsFetchRemote() {
 
 messageHandlers["worker.tabs.fetchRemote-response"] = function(data) {
   log("worker.tabs.fetchRemote-response " + JSON.stringify(data));
-  renderTabs(data);
+
+  var ul = $("div#tabs-remote > ul");
+  renderTabs(ul, data);
 };
 
 var intervalID = null;

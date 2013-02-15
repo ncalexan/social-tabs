@@ -247,6 +247,8 @@ var handlers = {
   },
 
   'tabs': function(port, msg) {
+    broadcast(msg.topic, msg.data);
+
     // Send to server.
     let user = userData.userName;
     let device = localDeviceInfo.profileID;
@@ -306,6 +308,9 @@ var handlers = {
 
         let result = {};
         for (var i = 0; i < deviceNames.length; i++) {
+          // Skip local device.
+          if (deviceNames[i] === localDeviceInfo.profileID)
+            continue;
           result[deviceNames[i]] = { online: false, tabs: res[i] };
         }
 
