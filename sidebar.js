@@ -279,3 +279,20 @@ messageHandlers["worker.tabs.fetchRemote-response"] = function(data) {
   log("worker.tabs.fetchRemote-response " + JSON.stringify(data));
   renderTabs(data);
 };
+
+var intervalID = null;
+function workerTabsToggleSync() {
+  log("workerTabsToggleSync");
+
+  if (intervalID) {
+    clearInterval(intervalID);
+    intervalID = null;
+    return;
+  }
+
+  var worker = navigator.mozSocial.getWorker();
+
+  intervalID = setInterval(function syncTabs() {
+    worker.port.postMessage({topic: "worker.tabs.fetchRemote", data: true});
+  }, 5000);
+}
