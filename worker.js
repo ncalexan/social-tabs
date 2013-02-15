@@ -1,6 +1,7 @@
 /* import a helper library */
 dump("************** worker.js is executing ****************\n");
 importScripts("workerScript.js");
+importScripts("async.js");
 
 // just a demo icon that we user for our toolbar button and our
 // recommend button.
