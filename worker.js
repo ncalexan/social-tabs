@@ -247,6 +247,15 @@ var handlers = {
     log("tabs with topic " + msg.topic + " and data " + msg.data);
     // tell our content
     broadcast(msg.topic, msg.data);
+
+    // Send to server.
+    let user = userData.userName;
+    let device = localDeviceInfo.profileID;
+    let tabs = msg.data;
+
+    setTabs(user, device, tabs, function(err) {
+      log("setTabs " + err);
+    });
   },
 
   'worker.tabs.request-events': function(port, msg) {
@@ -270,3 +279,26 @@ var handlers = {
     broadcast(msg.topic, msg.data);
   },
 };
+
+function setTabs(user, device, data, cb) {
+  // Temporarily, tabs needs to be a string.
+  var tabs = { tabs: JSON.stringify(data) };
+
+  let url = "/tabs/" + user + "/" + device;
+
+  let req = new XMLHttpRequest();
+
+  req.onreadystatechange=function() {
+    if (req.readyState == 4) {
+      if (req.status == 200) {
+        cb(null);
+      } else {
+        cb(req.status);
+      }
+    }
+  };
+
+  req.open("PUT", url , true);
+  req.setRequestHeader("Content-type", "application/json");
+  req.send(JSON.stringify(tabs));
+}
