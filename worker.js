@@ -100,6 +100,8 @@ onconnect = function(e) {
 
 var userData = {};
 
+var localDeviceInfo = null;
+
 // We have no way to see cookies in the worker, so we have to ask Firefox
 // to tell us what the cookies are for our domain.  As well, since we are
 // relying on cookies as part of our demo login functionality, we need to
@@ -250,6 +252,12 @@ var handlers = {
   'worker.tabs.request-events': function(port, msg) {
     log("worker.tabs.request-events with data " + msg.data);
     apiPort.postMessage({topic: 'social.tabs.request-events', data: msg.data});
+  },
+
+  'social.tabs.request-events-response': function(port, msg) {
+    localDeviceInfo = msg.data.localDeviceInfo;
+    log("social.tabs.request-events-response " + msg.data + "; localDeviceInfo now " + JSON.stringify(localDeviceInfo));
+    broadcast(msg.topic, msg.data);
   },
 
   'worker.tabs.fetchAll': function(port, msg) {

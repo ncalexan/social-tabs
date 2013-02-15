@@ -86,7 +86,6 @@ function addTabsRequestHandlersTo(socialProvider) {
     this._port.postMessage({topic: 'social.tabs.fetchAll-response',
                             data: _.map(tabs, _dataForTab)});
   };
-  log("workerAPI.handlers", workerAPI.handlers);
 }
 
 function startListeningForTabRequests() {
@@ -96,13 +95,19 @@ function startListeningForTabRequests() {
   WorkerAPI.prototype.handlers['social.tabs.request-events'] = function(data) {
     log("social.tabs.request-events", "this =", this, "data =", JSON.stringify(data));
 
+    let deviceInfo = null;
     let enable = !!data;
     if (enable) {
       startBroadcastingTabEventsTo(this._provider);
       addTabsRequestHandlersTo(this._provider);
+      deviceInfo = require("./deviceinfo").deviceInfo;
     } else {
       // Nothing for now.
     }
+
+    let port = this._provider.getWorkerPort();
+    port.postMessage({topic: 'social.tabs.request-events-response',
+                      data: { 'localDeviceInfo': deviceInfo } });
   };
 }
 

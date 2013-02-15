@@ -63,6 +63,8 @@ var messageHandlers = {
     // worker.connected is our own custom message
     var worker = navigator.mozSocial.getWorker();
     worker.port.postMessage({topic: "broadcast.listen", data: true});
+
+    worker.port.postMessage({topic: "worker.tabs.request-events", data: true});
   },
   "social.user-profile": function(data) {
     if (data.userName)
@@ -174,7 +176,7 @@ function notify(type) {
   }
 };
 
-var myDeviceInfo = { profileID: 'localhost' };
+var localDeviceInfo = null; // { profileID: 'localhost' };
 
 function renderDevice(deviceName, online, tabs) {
   dump("device " + deviceName + " (online: " + online + ")\n");
@@ -182,7 +184,7 @@ function renderDevice(deviceName, online, tabs) {
   var dul = $("#templates>.device-entry").clone();
   dul.find("span.device-name").text(deviceName);
 
-  if (deviceName == myDeviceInfo.profileID)
+  if (deviceName == localDeviceInfo.profileID)
     dul.addClass("my-device");
 
   if (online)
@@ -208,7 +210,8 @@ function renderDevice(deviceName, online, tabs) {
 }
 
 function renderTabs(data) {
-  var temp = { 'localhost': { online: true, tabs: data } };
+  var temp = {};
+  temp[localDeviceInfo.profileID] = { online: true, tabs: data };
   data = temp;
 
   var ul = $("div#tabs > ul");
@@ -253,4 +256,12 @@ function workerTabsFetchAll() {
 
 messageHandlers["social.tabs.fetchAll-response"] = function(data) {
   dump("social.tabs.fetchAll-response " + JSON.stringify(data));
+};
+
+/**
+ * Include this machine's name in tabs header.
+ */
+messageHandlers["social.tabs.request-events-response"] = function(data) {
+  dump("social.tabs.request-events-response " + JSON.stringify(data));
+  localDeviceInfo = data.localDeviceInfo;
 };
