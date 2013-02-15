@@ -218,10 +218,6 @@ function renderDevice(deviceName, online, tabs) {
 }
 
 function renderTabs(data) {
-  var temp = {};
-  temp[localDeviceInfo.profileID] = { online: true, tabs: data };
-  data = temp;
-
   var ul = $("div#tabs > ul");
   ul.empty();
 
@@ -240,8 +236,6 @@ function renderTabs(data) {
     ul.append(dul);
   });
 };
-
-messageHandlers["tabs"] = renderTabs;
 
 /**
  * Send event to worker requesting it to ask the WorkerAPI for tab
@@ -273,4 +267,15 @@ messageHandlers["social.tabs.fetchAll-response"] = function(data) {
 messageHandlers["social.tabs.request-events-response"] = function(data) {
   log("social.tabs.request-events-response " + JSON.stringify(data));
   localDeviceInfo = data.localDeviceInfo;
+};
+
+function workerTabsFetchRemote() {
+  log("workerTabsFetchRemote");
+  var worker = navigator.mozSocial.getWorker();
+  worker.port.postMessage({topic: "worker.tabs.fetchRemote", data: true});
+}
+
+messageHandlers["worker.tabs.fetchRemote-response"] = function(data) {
+  log("worker.tabs.fetchRemote-response " + JSON.stringify(data));
+  renderTabs(data);
 };

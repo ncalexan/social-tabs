@@ -247,10 +247,6 @@ var handlers = {
   },
 
   'tabs': function(port, msg) {
-    log("tabs with topic " + msg.topic + " and data " + msg.data);
-    // tell our content
-    broadcast(msg.topic, msg.data);
-
     // Send to server.
     let user = userData.userName;
     let device = localDeviceInfo.profileID;
@@ -281,6 +277,42 @@ var handlers = {
     log("social.tabs.fetchAll-response " + msg.data);
     broadcast(msg.topic, msg.data);
   },
+
+  'worker.tabs.fetchRemote': function(port, msg) {
+    log("worker.tabs.fetchRemote " + msg.data);
+
+    // Get from server.
+    let user = userData.userName;
+    getDevices(user, function(err, res) {
+      if (err) {
+        log("error getting devices " + err);
+        return;
+      }
+
+      log("got devices " + JSON.stringify(res));
+
+      let fn = function(device, callback) {
+        log("getting tabs for device " + device);
+        getTabs(user, device, callback);
+      };
+
+      let deviceNames = Object.keys(res.devices);
+
+      async.map(deviceNames, fn, function(err, res) {
+        if (err) {
+          log("error getting tabs " + err);
+          return;
+        }
+
+        let result = {};
+        for (var i = 0; i < deviceNames.length; i++) {
+          result[deviceNames[i]] = { online: false, tabs: res[i] };
+        }
+
+        broadcast(msg.topic + "-response", result);
+      });
+    });
+  },
 };
 
 function setTabs(user, device, data, cb) {
@@ -304,4 +336,45 @@ function setTabs(user, device, data, cb) {
   req.open("PUT", url , true);
   req.setRequestHeader("Content-type", "application/json");
   req.send(JSON.stringify(tabs));
+}
+
+function getDevices(user, cb) {
+  let url = "/tabs/" + user;
+
+  let req = new XMLHttpRequest();
+
+  req.onreadystatechange=function() {
+    if (req.readyState == 4) {
+      if (req.status == 200) {
+        cb(null, req.response);
+      } else {
+        cb(req.status);
+      }
+    }
+  };
+
+  req.open("GET", url , true);
+  req.responseType = "json";
+  req.send();
+}
+
+function getTabs(user, device, cb) {
+  let url = "/tabs/" + user + "/" + device;
+
+  let req = new XMLHttpRequest();
+
+  req.onreadystatechange=function() {
+    if (req.readyState == 4) {
+      if (req.status == 200) {
+        let res = JSON.parse(req.response.tabs);
+        cb(null, res);
+      } else {
+        cb(req.status);
+      }
+    }
+  };
+
+  req.open("GET", url , true);
+  req.responseType = "json";
+  req.send();
 }
