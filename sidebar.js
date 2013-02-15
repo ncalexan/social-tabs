@@ -222,7 +222,8 @@ function renderTabs(data) {
   var devices = Object.keys(data);
   devices.sort();
   devices.forEach(function(deviceName) {
-    var online = data[deviceName].online;
+    // Don't say anything about device's online status for now.
+    var online = false; // data[deviceName].online;
     var tabs = data[deviceName].tabs || [];
 
     var dul = renderDevice(deviceName, online, tabs);
