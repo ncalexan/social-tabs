@@ -8,7 +8,8 @@ const log = console.log.bind(LOG_TAG);
 
 const _ = require("underscore");
 
-const tabs = require("tabs");
+const tabs = require("sdk/tabs"),
+      data = require("sdk/self").data;
 
 const { Cu } = require("chrome");
 let Social = Cu.import("resource:///modules/Social.jsm", {}).Social;
@@ -111,6 +112,25 @@ function startListeningForTabRequests() {
   };
 }
 
+let tabsPanel = null;
+let tabsWidget = null;
+
+function addWidget() {
+  tabsPanel = require("sdk/panel").Panel({
+    width:400,
+    height:500,
+    contentURL: data.url("tabs.html"),
+  });
+
+  tabsWidget = require("sdk/widget").Widget({
+    id: "show-tabs-panel",
+    label: "Show Tabs from other devices",
+    contentURL: data.url("icons/icon.png"),
+    panel: tabsPanel,
+  });
+}
+
 startListeningForTabRequests();
+addWidget();
 
 log("Add-on started with Social " + Social);
