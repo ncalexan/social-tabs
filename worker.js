@@ -27,7 +27,7 @@ var _broadcastReceivers = [];
 function broadcast(topic, payload)
 {
   // we need to broadcast to all ports connected to this shared worker
-  ports = [].concat(_broadcastReceivers);
+  var ports = [].concat(_broadcastReceivers);
   for (var i = 0; i < ports.length; i++) {
     log("about to broadcast to " + _broadcastReceivers[i]);
     try {
