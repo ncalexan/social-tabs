@@ -1,3 +1,8 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+'use strict';
+
 /* configure logging */
 var LOG_TAG = "worker";
 function log(msg) {
@@ -38,16 +43,16 @@ function broadcast(topic, payload)
   }
 }
 
-ononline = function() {
+function ononline() {
   dump("!!!!!!! ononline called "+navigator.onLine+"\n");
 };
 
-onoffline = function() {
+function onoffline() {
   dump("!!!!!!! onoffline called "+navigator.onLine+"\n");
 };
 
 // Called when any port connects to the worker
-onconnect = function(e) {
+function onconnect(e) {
   try {
     var port = e.ports[0];
 
