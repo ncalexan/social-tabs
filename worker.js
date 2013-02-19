@@ -314,7 +314,7 @@ var handlers = {
           result[deviceNames[i]] = { online: false, tabs: res[i] };
         }
 
-        broadcast(msg.topic + "-response", result);
+        broadcast("worker.tabs.fetchRemote-response", result);
       });
     });
   },
